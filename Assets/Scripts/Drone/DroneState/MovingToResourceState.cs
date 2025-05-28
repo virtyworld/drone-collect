@@ -1,3 +1,7 @@
+/// <summary>
+/// State that handles drone movement towards a target resource.
+/// Manages navigation, arrival detection, and state transitions when moving to collect resources.
+/// </summary>
 using UnityEngine;
 
 public class MovingToResourceState : DroneBaseState
@@ -6,6 +10,10 @@ public class MovingToResourceState : DroneBaseState
 
     public MovingToResourceState(DroneAI drone, DroneStateMachine stateMachine) : base(drone, stateMachine) { }
 
+    /// <summary>
+    /// Initializes the state by setting the drone's destination to the target resource.
+    /// If no target resource exists, transitions back to searching state.
+    /// </summary>
     public override void EnterState()
     {
         // Set destination to target resource
@@ -22,6 +30,11 @@ public class MovingToResourceState : DroneBaseState
         }
     }
 
+    /// <summary>
+    /// Updates the drone's movement and checks for state transitions.
+    /// Verifies resource validity, updates destination, and checks for arrival.
+    /// Transitions to collecting state when resource is reached.
+    /// </summary>
     public override void UpdateState()
     {
         GameObject targetResource = drone.GetTargetResource();
@@ -58,6 +71,9 @@ public class MovingToResourceState : DroneBaseState
         }
     }
 
+    /// <summary>
+    /// Stops the drone's movement when exiting this state.
+    /// </summary>
     public override void ExitState()
     {
         // Stop the drone when leaving this state

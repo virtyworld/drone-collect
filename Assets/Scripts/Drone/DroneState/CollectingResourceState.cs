@@ -1,3 +1,8 @@
+/// <summary>
+/// Represents the state where a drone is actively collecting a resource.
+/// This state handles the resource collection process, including waiting time,
+/// resource destruction, and transitioning to the next appropriate state.
+/// </summary>
 using System.Collections;
 using UnityEngine;
 
@@ -8,6 +13,9 @@ public class CollectingResourceState : DroneBaseState
 
     public CollectingResourceState(DroneAI drone, DroneStateMachine stateMachine) : base(drone, stateMachine) { }
 
+    /// <summary>
+    /// Initializes the collecting state by stopping the drone and getting the target resource.
+    /// </summary>
     public override void EnterState()
     {
         // Остановить движение дрона
@@ -16,6 +24,9 @@ public class CollectingResourceState : DroneBaseState
         targetResource = drone.GetTargetResource();
     }
 
+    /// <summary>
+    /// Updates the state by initiating the resource collection process if not already collecting.
+    /// </summary>
     public override void UpdateState()
     {
         if (!isCollecting)
@@ -25,6 +36,13 @@ public class CollectingResourceState : DroneBaseState
         }
     }
 
+    /// <summary>
+    /// Coroutine that handles the actual resource collection process:
+    /// - Waits for collection time
+    /// - Releases and destroys the resource
+    /// - Updates drone state
+    /// - Transitions to appropriate next state
+    /// </summary>
     private IEnumerator CollectResource()
     {
         // Ждем 2 секунды

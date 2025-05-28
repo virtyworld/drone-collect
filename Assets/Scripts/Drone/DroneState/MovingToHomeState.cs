@@ -1,3 +1,7 @@
+/// <summary>
+/// State that handles drone movement back to the home base after collecting resources.
+/// Manages navigation and arrival detection at the base location.
+/// </summary>
 using UnityEngine;
 
 public class MovingToHomeState : DroneBaseState
@@ -6,6 +10,9 @@ public class MovingToHomeState : DroneBaseState
 
     public MovingToHomeState(DroneAI drone, DroneStateMachine stateMachine) : base(drone, stateMachine) { }
 
+    /// <summary>
+    /// Initializes the state by setting the drone's destination to the home base position
+    /// </summary>
     public override void EnterState()
     {
         // Set destination to home base
@@ -14,6 +21,9 @@ public class MovingToHomeState : DroneBaseState
         drone.MoveTo(homePosition, true);
     }
 
+    /// <summary>
+    /// Checks if the drone has reached the home base and transitions to unloading state when arrived
+    /// </summary>
     public override void UpdateState()
     {
         // Check if we've reached the base
@@ -24,6 +34,9 @@ public class MovingToHomeState : DroneBaseState
         }
     }
 
+    /// <summary>
+    /// Stops the drone's movement when exiting this state
+    /// </summary>
     public override void ExitState()
     {
         // Stop the drone when leaving this state
