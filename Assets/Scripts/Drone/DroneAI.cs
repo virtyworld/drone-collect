@@ -90,9 +90,9 @@ public class DroneAI : MonoBehaviour
         return targetResource;
     }
 
-    public void MoveTo(Vector3 destination)
+    public void MoveTo(Vector3 destination, bool isReturningToBase = false)
     {
-        movementController.SetDestination(destination);
+        movementController.SetDestination(destination, isReturningToBase);
     }
 
     public bool HasReachedDestination()
