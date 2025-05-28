@@ -7,6 +7,7 @@ public class AStarPathfinding : MonoBehaviour
     [SerializeField] private LayerMask unwalkableMask; // Set this in the inspector to specify which layers block movement
     [SerializeField] private bool showDebugGrid = true; // Toggle grid visualization in the inspector   
     public bool HasReachedDestination { get; private set; } = false;
+    public bool IsSearchingForResource { get; private set; } = false;
 
     private class Node
     {
@@ -93,9 +94,13 @@ public class AStarPathfinding : MonoBehaviour
 
         // Проверяем коллизии между нижней и верхней точками
         RaycastHit[] hits = Physics.SphereCastAll(position, droneRadius, Vector3.up, droneHeight, unwalkableMask);
-        if (hits.Length > 0)
+        foreach (RaycastHit hit in hits)
         {
-            return false;
+            // Игнорируем коллизии с самим дроном
+            if (hit.transform != droneTransform)
+            {
+                return false;
+            }
         }
 
         return true;
@@ -204,9 +209,11 @@ public class AStarPathfinding : MonoBehaviour
         if (!startNode.walkable || !targetNode.walkable)
         {
             Debug.LogWarning("Start or target node is not walkable!");
+            IsSearchingForResource = true;
             return null;
         }
 
+        IsSearchingForResource = false;
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
