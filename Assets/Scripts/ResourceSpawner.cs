@@ -15,7 +15,7 @@ public class ResourceSpawner : MonoBehaviour
     [SerializeField] private float spawnRadius = 15f;
     [SerializeField] private float minSpawnHeight = 10f;
     [SerializeField] private float maxSpawnHeight = 10f;
-    [SerializeField] private int maxResources = 100;
+    [SerializeField] private int maxResources = 1000;
 
     [Header("Obstacle Detection")]
     [SerializeField] private float obstacleCheckRadius = 2f;
