@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MovingToHomeState : DroneBaseState
 {
-    private float arrivalDistance = 0.5f; // Distance at which we consider the drone has arrived at the base
+    private float arrivalDistance = 1.5f; // Distance at which we consider the drone has arrived at the base
 
     public MovingToHomeState(DroneAI drone, DroneStateMachine stateMachine) : base(drone, stateMachine) { }
 
@@ -10,13 +10,13 @@ public class MovingToHomeState : DroneBaseState
     {
         // Set destination to home base
         Vector3 homePosition = drone.GetHomeBasePosition();
-        drone.MoveTo(homePosition);
+        // Use the isReturningToBase parameter to ensure the drone moves towards the base
+        drone.MoveTo(homePosition, true);
     }
 
     public override void UpdateState()
     {
         // Check if we've reached the base
-
         if (Vector3.Distance(drone.transform.position, drone.GetHomeBasePosition()) <= arrivalDistance)
         {
             // We've reached the base, transition to unloading state
