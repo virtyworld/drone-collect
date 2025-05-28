@@ -1,82 +1,30 @@
 using UnityEngine;
-
+using UnityEngine.Events;
 public class Base : MonoBehaviour
 {
     [SerializeField] private ParticleSystem unloadParticles;
     [SerializeField] private float scaleEffectDuration = 0.5f;
     [SerializeField] private float scaleEffectMultiplier = 1.2f;
 
-    private int collectedResources = 0;
-    private Vector3 originalScale;
-    private float scaleEffectTimer = 0f;
-    private bool isScaling = false;
+    public int factionId;
+    public int collectedResources = 0;
 
-    private void Start()
+    public void Setup(int factionId, UnityEvent<int, int> onResourceUnloaded)
     {
-        originalScale = transform.localScale;
-
-        // Create particle system if not assigned
-        if (unloadParticles == null)
-        {
-            GameObject particlesObj = new GameObject("UnloadParticles");
-            particlesObj.transform.SetParent(transform);
-            particlesObj.transform.localPosition = Vector3.zero;
-
-            unloadParticles = particlesObj.AddComponent<ParticleSystem>();
-            var main = unloadParticles.main;
-            main.startColor = GetComponent<MeshRenderer>().material.color;
-            main.startSize = 0.2f;
-            main.startSpeed = 2f;
-            main.duration = 1f;
-            main.loop = false;
-
-            var emission = unloadParticles.emission;
-            emission.rateOverTime = 0;
-            emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0f, 20) });
-
-            var shape = unloadParticles.shape;
-            shape.shapeType = ParticleSystemShapeType.Sphere;
-            shape.radius = 0.5f;
-        }
+        this.factionId = factionId;
+        onResourceUnloaded.AddListener(OnResourceUnloaded);
     }
 
-    private void Update()
+    public void OnResourceUnloaded(int factionId, int amount)
     {
-        if (isScaling)
+        if (factionId == this.factionId)
         {
-            scaleEffectTimer += Time.deltaTime;
-            float progress = scaleEffectTimer / scaleEffectDuration;
-
-            if (progress >= 1f)
+            // Play particle effect
+            if (unloadParticles != null)
             {
-                transform.localScale = originalScale;
-                isScaling = false;
-            }
-            else
-            {
-                float scale = Mathf.Lerp(scaleEffectMultiplier, 1f, progress);
-                transform.localScale = originalScale * scale;
+                unloadParticles.Play();
             }
         }
     }
 
-    public void OnResourceUnloaded()
-    {
-        collectedResources++;
-
-        // Play particle effect
-        if (unloadParticles != null)
-        {
-            unloadParticles.Play();
-        }
-
-        // Start scale effect
-        isScaling = true;
-        scaleEffectTimer = 0f;
-    }
-
-    public int GetCollectedResources()
-    {
-        return collectedResources;
-    }
 }

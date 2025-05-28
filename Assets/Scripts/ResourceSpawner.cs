@@ -7,32 +7,40 @@ public class ResourceSpawner : MonoBehaviour
     [SerializeField] private SpawnedResource resourcePrefab; // Префаб ресурса для спавна
     [SerializeField] private float spawnInterval = 5f; // Интервал между спавном ресурсов в секундах
     [SerializeField] private float spawnRadius = 15f; // Радиус области спавна
+    [SerializeField] private float minSpawnHeight = 10f; // Минимальная высота спавна
+    [SerializeField] private float maxSpawnHeight = 10f; // Максимальная высота спавна
     [SerializeField] private int maxResources = 100;
-    [SerializeField] private float obstacleCheckRadius = 1.5f;
+    [SerializeField] private float obstacleCheckRadius = 2f;
     [SerializeField] private LayerMask obstacleLayer;
     [SerializeField] private Transform dirToSpawn;
 
+    private bool isInitialized = false;
     private float nextSpawnTime;
     private List<SpawnedResource> spawnedResources = new List<SpawnedResource>();
 
+    public void Setup(UnityEvent<float> onResourceSpawnIntervalChanged)
+    {
+        onResourceSpawnIntervalChanged.AddListener(UpdateSpawnInterval);
+        Initialize();
+    }
+    void Initialize()
+    {
+        nextSpawnTime = Time.time + spawnInterval;
+        isInitialized = true;
+    }
     public void UpdateSpawnInterval(float spawnsPerSecond)
     {
-        Debug.Log("UpdateSpawnInterval: " + spawnsPerSecond);
         // Преобразуем количество спавнов в секунду в интервал между спавнами
         spawnInterval = 1f / spawnsPerSecond;
 
         // Обновляем время следующего спавна
         nextSpawnTime = Time.time + spawnInterval;
     }
-
-    void Start()
-    {
-        nextSpawnTime = Time.time + spawnInterval;
-    }
-
     // Update is called once per frame
     void Update()
     {
+        if (!isInitialized) return;
+
         if (Time.time >= nextSpawnTime && spawnedResources.Count < maxResources)
         {
             SpawnResource();
@@ -65,8 +73,11 @@ public class ResourceSpawner : MonoBehaviour
     {
         float randomAngle = Random.Range(0f, 360f);
         float randomDistance = Random.Range(0f, spawnRadius);
+        float randomHeight = Random.Range(minSpawnHeight, maxSpawnHeight);
         Vector3 randomDirection = Quaternion.Euler(0, randomAngle, 0) * Vector3.forward;
-        return transform.position + randomDirection * randomDistance;
+        Vector3 position = transform.position + randomDirection * randomDistance;
+        position.y = randomHeight;
+        return position;
     }
 
     private bool IsObstacleNearby(Vector3 position)
@@ -74,6 +85,4 @@ public class ResourceSpawner : MonoBehaviour
         Collider[] colliders = Physics.OverlapSphere(position, obstacleCheckRadius, obstacleLayer);
         return colliders.Length > 0;
     }
-
-
 }

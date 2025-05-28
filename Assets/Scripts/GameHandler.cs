@@ -8,49 +8,74 @@ public class GameHandler : MonoBehaviour
     [SerializeField] private List<GameObject> blueDrones = new List<GameObject>();
     [SerializeField] private UIManager uiHandler;
     [SerializeField] private ResourceSpawner resourceSpawner;
+    [SerializeField] private Base redBase;
+    [SerializeField] private Base blueBase;
 
-    private UnityAction<float> onDroneSpeedChanged;
-    private UnityAction<float> onResourceSpawnIntervalChanged;
-    private UnityAction<bool> onPathVisibleChanged;
-    private List<DroneMovement> redDronesMovement;
-    private List<DroneMovement> blueDronesMovement;
+
+    private UnityEvent<float> onDroneSpeedChanged;
+    private UnityEvent<float> onResourceSpawnIntervalChanged;
+    private UnityEvent<bool> onPathVisibleChanged;
+    public UnityEvent<int, int> onResourceUnloaded;
+    public UnityEvent<int> onDroneCountChanged;
+    private List<DroneMovement> redDronesMovement = new List<DroneMovement>();
+    private List<DroneMovement> blueDronesMovement = new List<DroneMovement>();
+    private List<DroneAI> redDronesAI = new List<DroneAI>();
+    private List<DroneAI> blueDronesAI = new List<DroneAI>();
 
     void Awake()
     {
-        redDronesMovement = new List<DroneMovement>();
-        blueDronesMovement = new List<DroneMovement>();
-        onDroneSpeedChanged = new UnityAction<float>(speed => { });
-        onResourceSpawnIntervalChanged = new UnityAction<float>(interval => { });
-        onPathVisibleChanged = new UnityAction<bool>(isVisible => { });
+        onDroneSpeedChanged = new UnityEvent<float>();
+        onResourceSpawnIntervalChanged = new UnityEvent<float>();
+        onPathVisibleChanged = new UnityEvent<bool>();
+        onResourceUnloaded = new UnityEvent<int, int>();
+        onDroneCountChanged = new UnityEvent<int>();
+        onDroneCountChanged.AddListener(SetDroneCountPerFaction);
         InitUI();
+        InitBases();
         InitDrones();
+        InitResourceSpawner();
     }
 
 
     private void InitUI()
     {
-        uiHandler.Setup(this);
+        uiHandler.Setup(onDroneSpeedChanged, onResourceSpawnIntervalChanged, onPathVisibleChanged, onDroneCountChanged, onResourceUnloaded);
+    }
+    private void InitBases()
+    {
+        redBase.Setup(1, onResourceUnloaded);
+        blueBase.Setup(2, onResourceUnloaded);
     }
     private void InitDrones()
     {
         foreach (var drone in redDrones)
         {
             DroneMovement droneMovement = drone.GetComponent<DroneMovement>();
+            DroneAI droneAI = drone.GetComponent<DroneAI>();
             if (droneMovement != null)
             {
-                onDroneSpeedChanged += droneMovement.SetDroneSpeed;
-                onPathVisibleChanged += droneMovement.SetPathVisible;
+                droneMovement.Setup(onDroneSpeedChanged, onPathVisibleChanged);
                 redDronesMovement.Add(droneMovement);
+            }
+            if (droneAI != null)
+            {
+                droneAI.Setup(redBase, onResourceUnloaded, 1);
+                redDronesAI.Add(droneAI);
             }
         }
         foreach (var drone in blueDrones)
         {
             DroneMovement droneMovement = drone.GetComponent<DroneMovement>();
+            DroneAI droneAI = drone.GetComponent<DroneAI>();
             if (droneMovement != null)
             {
-                onPathVisibleChanged += droneMovement.SetPathVisible;
-                onDroneSpeedChanged += droneMovement.SetDroneSpeed;
+                droneMovement.Setup(onDroneSpeedChanged, onPathVisibleChanged);
                 blueDronesMovement.Add(droneMovement);
+            }
+            if (droneAI != null)
+            {
+                droneAI.Setup(blueBase, onResourceUnloaded, 2);
+                blueDronesAI.Add(droneAI);
             }
         }
     }
@@ -83,13 +108,12 @@ public class GameHandler : MonoBehaviour
         onDroneSpeedChanged.Invoke(speed);
     }
 
-    public void SetResourceSpawnInterval(float interval)
-    {
-        resourceSpawner.UpdateSpawnInterval(interval);
-    }
-
     public void SetDronePathVisibility(bool isVisible)
     {
         onPathVisibleChanged.Invoke(isVisible);
+    }
+    private void InitResourceSpawner()
+    {
+        resourceSpawner.Setup(onResourceSpawnIntervalChanged);
     }
 }

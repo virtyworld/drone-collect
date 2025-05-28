@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI; // Для стандартных UI элементов (Slider, Toggle)
-using TMPro;          // Для TextMeshPro элементов (TMP_InputField, TMP_Text)
+using TMPro;
+using UnityEngine.Events;          // Для TextMeshPro элементов (TMP_InputField, TMP_Text)
 
 public class UIManager : MonoBehaviour
 {
@@ -12,12 +13,25 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text redFactionScoreText;
     [SerializeField] private TMP_Text blueFactionScoreText;
 
-    private GameHandler gameHandler;
-    public void Setup(GameHandler gameHandler)
+    private UnityEvent<float> onDroneSpeedChanged;
+    private UnityEvent<float> onResourceSpawnIntervalChanged;
+    private UnityEvent<bool> onPathVisibleChanged;
+    private UnityEvent<int> onDroneCountChanged;
+    public UnityEvent<int, int> onResourceUnloaded;
+    private int currentRedScore = 0;
+    private int currentBlueScore = 0;
+
+    public void Setup(UnityEvent<float> onDroneSpeedChanged, UnityEvent<float> onResourceSpawnIntervalChanged,
+    UnityEvent<bool> onPathVisibleChanged, UnityEvent<int> onDroneCountChanged, UnityEvent<int, int> onResourceUnloaded)
     {
-        this.gameHandler = gameHandler;
+        this.onDroneSpeedChanged = onDroneSpeedChanged;
+        this.onResourceSpawnIntervalChanged = onResourceSpawnIntervalChanged;
+        this.onPathVisibleChanged = onPathVisibleChanged;
+        this.onDroneCountChanged = onDroneCountChanged;
+        onResourceUnloaded.AddListener(UpdateFactionScoreUI);
+        Initialize();
     }
-    void Start()
+    void Initialize()
     {
         droneCountSlider.onValueChanged.AddListener(OnDroneCountChanged);
         droneSpeedSlider.onValueChanged.AddListener(OnDroneSpeedChanged);
@@ -32,18 +46,15 @@ public class UIManager : MonoBehaviour
     private void OnDroneCountChanged(float value)
     {
         int count = Mathf.RoundToInt(value);
-        gameHandler.SetDroneCountPerFaction(count);
+        onDroneCountChanged.Invoke(count);
     }
 
 
 
     private void OnDroneSpeedChanged(float value)
     {
-        if (gameHandler != null)
-            gameHandler.SetAllDronesSpeed(value);
+        onDroneSpeedChanged.Invoke(value);
     }
-
-
 
     private void OnResourceSpawnRateChanged(string valueString)
     {
@@ -55,7 +66,7 @@ public class UIManager : MonoBehaviour
             if (interval > 0)
             {
                 Debug.Log("OnResourceSpawnRateChanged: " + interval);
-                gameHandler.SetResourceSpawnInterval(interval);
+                onResourceSpawnIntervalChanged.Invoke(interval);
             }
             else
             {
@@ -70,7 +81,7 @@ public class UIManager : MonoBehaviour
 
     private void OnShowDronePathToggled(bool isOn)
     {
-        gameHandler.SetDronePathVisibility(isOn);
+        onPathVisibleChanged.Invoke(isOn);
     }
 
 
@@ -78,23 +89,13 @@ public class UIManager : MonoBehaviour
     {
         if (factionId == 1 && redFactionScoreText != null)
         {
-            redFactionScoreText.text = $"{score}";
+            currentRedScore += score;
+            redFactionScoreText.text = $"{currentRedScore}";
         }
         else if (factionId == 2 && blueFactionScoreText != null)
         {
-            blueFactionScoreText.text = $"{score}";
+            currentBlueScore += score;
+            blueFactionScoreText.text = $"{currentBlueScore}";
         }
-    }
-
-    void OnDestroy()
-    {
-        if (droneCountSlider != null)
-            droneCountSlider.onValueChanged.RemoveListener(OnDroneCountChanged);
-        if (droneSpeedSlider != null)
-            droneSpeedSlider.onValueChanged.RemoveListener(OnDroneSpeedChanged);
-        if (resourceSpawnRateInput != null)
-            resourceSpawnRateInput.onEndEdit.RemoveListener(OnResourceSpawnRateChanged);
-        if (showDronePathToggle != null)
-            showDronePathToggle.onValueChanged.RemoveListener(OnShowDronePathToggled);
     }
 }
