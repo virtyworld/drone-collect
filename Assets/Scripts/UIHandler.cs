@@ -1,3 +1,8 @@
+/// <summary>
+/// Manages the user interface for a drone simulation game.
+/// Handles UI elements including drone controls, resource management, and faction scoring.
+/// Uses Unity's UI system and TextMeshPro for text rendering.
+/// </summary>
 using UnityEngine;
 using UnityEngine.UI; // Для стандартных UI элементов (Slider, Toggle)
 using TMPro;
@@ -21,6 +26,10 @@ public class UIManager : MonoBehaviour
     private int currentRedScore = 0;
     private int currentBlueScore = 0;
 
+    /// <summary>
+    /// Initializes the UI manager with event handlers for various game parameters.
+    /// Sets up listeners for drone speed, resource spawn interval, path visibility, drone count, and resource unloading.
+    /// </summary>
     public void Setup(UnityEvent<float> onDroneSpeedChanged, UnityEvent<float> onResourceSpawnIntervalChanged,
     UnityEvent<bool> onPathVisibleChanged, UnityEvent<int> onDroneCountChanged, UnityEvent<int, int> onResourceUnloaded)
     {
@@ -31,6 +40,10 @@ public class UIManager : MonoBehaviour
         onResourceUnloaded.AddListener(UpdateFactionScoreUI);
         Initialize();
     }
+
+    /// <summary>
+    /// Sets up event listeners for all UI elements and initializes faction score displays.
+    /// </summary>
     void Initialize()
     {
         droneCountSlider.onValueChanged.AddListener(OnDroneCountChanged);
@@ -43,23 +56,32 @@ public class UIManager : MonoBehaviour
         UpdateFactionScoreUI(2, 0); // Начальный счет для фракции 2
     }
 
+    /// <summary>
+    /// Handles changes to the drone count slider.
+    /// Converts the float value to an integer and invokes the drone count change event.
+    /// </summary>
     private void OnDroneCountChanged(float value)
     {
         int count = Mathf.RoundToInt(value);
         onDroneCountChanged.Invoke(count);
     }
 
-
-
+    /// <summary>
+    /// Handles changes to the drone speed slider.
+    /// Invokes the drone speed change event with the new value.
+    /// </summary>
     private void OnDroneSpeedChanged(float value)
     {
         onDroneSpeedChanged.Invoke(value);
     }
 
+    /// <summary>
+    /// Processes changes to the resource spawn rate input field.
+    /// Validates the input, converts it to a float, and invokes the spawn interval change event.
+    /// Includes error handling for invalid inputs.
+    /// </summary>
     private void OnResourceSpawnRateChanged(string valueString)
     {
-        Debug.Log("OnResourceSpawnRateChanged: " + valueString);
-        // Replace comma with dot for consistent parsing
         valueString = valueString.Replace(',', '.');
         if (float.TryParse(valueString, out float interval))
         {
@@ -79,12 +101,19 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles the drone path visibility toggle.
+    /// Invokes the path visibility change event with the new state.
+    /// </summary>
     private void OnShowDronePathToggled(bool isOn)
     {
         onPathVisibleChanged.Invoke(isOn);
     }
 
-
+    /// <summary>
+    /// Updates the score display for either the red (faction 1) or blue (faction 2) team.
+    /// Maintains running totals for each faction's score.
+    /// </summary>
     public void UpdateFactionScoreUI(int factionId, int score)
     {
         if (factionId == 1 && redFactionScoreText != null)
