@@ -1,3 +1,7 @@
+/// <summary>
+/// Controls the AI behavior of a drone, managing its states and interactions with resources and home base.
+/// Handles resource collection, movement, and state transitions through a state machine pattern.
+/// </summary>
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +20,9 @@ public class DroneAI : MonoBehaviour
     public MovingToHomeState MovingToHomeState { get; private set; }
     public UnloadingResourceState UnloadingResourceState { get; private set; }
 
+    /// <summary>
+    /// Initializes the drone with its home base, resource unload callback, and faction ID.
+    /// </summary>
     public void Setup(Base homeBase, UnityEvent<int, int> onResourceUnloaded, int homeBaseFactionId)
     {
         this.homeBase = homeBase;
@@ -24,6 +31,9 @@ public class DroneAI : MonoBehaviour
         Initialize();
     }
 
+    /// <summary>
+    /// Sets up the drone's movement controller and initializes the state machine with all possible states.
+    /// </summary>
     private void Initialize()
     {
         movementController = GetComponent<DroneMovement>();
@@ -44,7 +54,9 @@ public class DroneAI : MonoBehaviour
         stateMachine.Initialize(SearchingState);
     }
 
-
+    /// <summary>
+    /// Updates the current state of the drone every frame.
+    /// </summary>
     void Update()
     {
         if (stateMachine != null)
@@ -53,17 +65,25 @@ public class DroneAI : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Updates whether the drone is currently carrying a resource.
+    /// </summary>
     public void SetCarryingResource(bool value)
     {
         isCarryingResource = value;
     }
 
+    /// <summary>
+    /// Returns the position of the drone's home base.
+    /// </summary>
     public Vector3 GetHomeBasePosition()
     {
         return homeBase != null ? homeBase.transform.position : transform.position;
     }
 
+    /// <summary>
+    /// Finds the closest available resource within the specified search radius.
+    /// </summary>
     public GameObject FindBestResource(float searchRadius = 15f)
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, searchRadius);
@@ -87,41 +107,61 @@ public class DroneAI : MonoBehaviour
         return bestResource;
     }
 
+    /// <summary>
+    /// Sets the current target resource for the drone to collect.
+    /// </summary>
     public void SetTargetResource(GameObject resource)
     {
         targetResource = resource;
     }
 
+    /// <summary>
+    /// Returns the current target resource the drone is pursuing.
+    /// </summary>
     public GameObject GetTargetResource()
     {
         return targetResource;
     }
 
+    /// <summary>
+    /// Commands the drone to move to a specified destination.
+    /// </summary>
     public void MoveTo(Vector3 destination, bool isReturningToBase = false)
     {
         movementController.SetDestination(destination, isReturningToBase);
     }
 
+    /// <summary>
+    /// Checks if the drone has reached its current destination.
+    /// </summary>
     public bool HasReachedDestination()
     {
         return movementController.HasReachedDestination();
     }
 
+    /// <summary>
+    /// Stops the drone's current movement.
+    /// </summary>
     public void StopMoving()
     {
         movementController.StopMoving();
     }
 
+    /// <summary>
+    /// Checks if the drone is currently returning to its home base.
+    /// </summary>
     public bool IsReturningToBase()
     {
         return stateMachine.CurrentState == MovingToHomeState;
     }
 
+    /// <summary>
+    /// Resumes the drone's movement based on its current state (either to resource or home base).
+    /// </summary>
     public void ContinueMovement()
     {
         if (stateMachine.CurrentState == MovingToResourceState)
         {
-            // Если мы двигались к ресурсу, продолжаем движение к нему
             if (targetResource != null)
             {
                 MoveTo(targetResource.transform.position);
@@ -129,7 +169,6 @@ public class DroneAI : MonoBehaviour
         }
         else if (stateMachine.CurrentState == MovingToHomeState)
         {
-            // Если мы возвращались на базу, продолжаем движение к ней
             MoveTo(GetHomeBasePosition(), true);
         }
     }

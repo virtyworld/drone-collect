@@ -1,3 +1,7 @@
+/// <summary>
+/// Handles collision avoidance for drones by detecting nearby drones and calculating avoidance forces.
+/// Uses prediction-based avoidance to prevent collisions and maintain safe distances between drones.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -14,6 +18,9 @@ public class DroneCollisionAvoidance : MonoBehaviour
     private List<Transform> nearbyDrones = new List<Transform>();
     private Vector3 avoidanceForce;
 
+    /// <summary>
+    /// Initializes required components and validates their presence
+    /// </summary>
     private void Start()
     {
         droneMovement = GetComponent<DroneMovement>();
@@ -29,6 +36,9 @@ public class DroneCollisionAvoidance : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Main update loop that handles collision avoidance
+    /// </summary>
     private void Update()
     {
         FindNearbyDrones();
@@ -36,6 +46,9 @@ public class DroneCollisionAvoidance : MonoBehaviour
         ApplyAvoidanceForce();
     }
 
+    /// <summary>
+    /// Detects and stores nearby drones within the detection radius
+    /// </summary>
     private void FindNearbyDrones()
     {
         nearbyDrones.Clear();
@@ -50,6 +63,9 @@ public class DroneCollisionAvoidance : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Calculates avoidance force based on nearby drones' positions and velocities
+    /// </summary>
     private void CalculateAvoidanceForce()
     {
         avoidanceForce = Vector3.zero;
@@ -75,6 +91,9 @@ public class DroneCollisionAvoidance : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies the calculated avoidance force to the drone's movement
+    /// </summary>
     private void ApplyAvoidanceForce()
     {
         if (avoidanceForce != Vector3.zero)
@@ -93,6 +112,9 @@ public class DroneCollisionAvoidance : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Visualizes the detection radius, minimum separation distance, and avoidance force in the editor
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         // Visualize detection radius

@@ -1,3 +1,8 @@
+/// <summary>
+/// Controls the movement and pathfinding behavior of a drone in a 3D environment.
+/// Handles path following, collision avoidance, and smooth movement transitions.
+/// Uses A* pathfinding for navigation and includes debug visualization capabilities.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
@@ -40,6 +45,9 @@ public class DroneMovement : MonoBehaviour
 
         Initialize();
     }
+    /// <summary>
+    /// Initializes the drone movement system with required components and settings
+    /// </summary>
     private void Initialize()
     {
         isInitialized = true;
@@ -47,7 +55,15 @@ public class DroneMovement : MonoBehaviour
         lastPosition = transform.position;
         lastDebugTime = Time.time;
 
-        // Initialize LineRenderer if not assigned
+        InitializeLineRenderer();
+        SetupEventListeners();
+    }
+
+    /// <summary>
+    /// Sets up the LineRenderer component for path visualization
+    /// </summary>
+    private void InitializeLineRenderer()
+    {
         if (pathLineRenderer == null)
         {
             pathLineRenderer = gameObject.AddComponent<LineRenderer>();
@@ -57,10 +73,20 @@ public class DroneMovement : MonoBehaviour
             pathLineRenderer.startColor = Color.yellow;
             pathLineRenderer.endColor = Color.yellow;
         }
+    }
+
+    /// <summary>
+    /// Sets up event listeners for drone speed and path visibility changes
+    /// </summary>
+    private void SetupEventListeners()
+    {
         onDroneSpeedChanged.AddListener(SetDroneSpeed);
         onPathVisibleChanged.AddListener(SetPathVisible);
     }
 
+    /// <summary>
+    /// Updates the visual representation of the current path
+    /// </summary>
     private void UpdatePathVisualization()
     {
         if (currentPath != null && currentPath.Count > 0)
@@ -77,12 +103,12 @@ public class DroneMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets a new destination for the drone to move towards
+    /// </summary>
     public void SetDestination(Vector3 target, bool isReturningToBase = false)
     {
-        if (isMoving)
-        {
-            return;
-        }
+        if (isMoving) return;
 
         targetPosition = target;
         isMoving = true;
@@ -90,51 +116,82 @@ public class DroneMovement : MonoBehaviour
         UpdatePath(isReturningToBase);
     }
 
+    /// <summary>
+    /// Main update loop handling drone movement and path following
+    /// </summary>
     private void Update()
     {
-        if (!isInitialized)
-        {
-            return;
-        }
-        if (!isMoving || currentPath == null || currentPath.Count == 0)
-        {
-            return;
-        }
-        float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
+        if (!ShouldUpdate()) return;
 
-        if (distanceToTarget <= minDistanceToTarget)
+        if (HasReachedTarget())
         {
-            isMoving = false;
-            hasReachedDestination = true;
-            currentPath = null;
-            pathLineRenderer.positionCount = 0;
-
+            HandleDestinationReached();
             return;
         }
 
-        // Calculate desired velocity
-        Vector3 desiredVelocity;
+        MoveDrone();
+        UpdateWaypointProgress();
+        CheckPathUpdateNeeded();
+        UpdateDebugInfo();
+    }
+
+    /// <summary>
+    /// Checks if the update loop should continue
+    /// </summary>
+    private bool ShouldUpdate()
+    {
+        return isInitialized && isMoving && currentPath != null && currentPath.Count > 0;
+    }
+
+    /// <summary>
+    /// Checks if the drone has reached its target position
+    /// </summary>
+    private bool HasReachedTarget()
+    {
+        return Vector3.Distance(transform.position, targetPosition) <= minDistanceToTarget;
+    }
+
+    /// <summary>
+    /// Handles cleanup when destination is reached
+    /// </summary>
+    private void HandleDestinationReached()
+    {
+        isMoving = false;
+        hasReachedDestination = true;
+        currentPath = null;
+        pathLineRenderer.positionCount = 0;
+    }
+
+    /// <summary>
+    /// Handles the actual movement of the drone
+    /// </summary>
+    private void MoveDrone()
+    {
+        Vector3 desiredVelocity = CalculateDesiredVelocity();
+        Vector3 avoidanceVelocity = CalculateAvoidanceVelocity();
+        Vector3 finalVelocity = desiredVelocity + avoidanceVelocity;
+
+        currentVelocity = Vector3.Lerp(currentVelocity, finalVelocity, Time.deltaTime / smoothTime);
+        transform.position += currentVelocity * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// Calculates the desired velocity based on current waypoint or target
+    /// </summary>
+    private Vector3 CalculateDesiredVelocity()
+    {
         if (currentPathIndex >= currentPath.Count - 1)
         {
-            desiredVelocity = (targetPosition - transform.position).normalized * moveSpeed;
+            return (targetPosition - transform.position).normalized * moveSpeed;
         }
-        else
-        {
-            Vector3 currentWaypoint = currentPath[currentPathIndex];
-            desiredVelocity = (currentWaypoint - transform.position).normalized * moveSpeed;
-        }
+        return (currentPath[currentPathIndex] - transform.position).normalized * moveSpeed;
+    }
 
-        // Apply collision avoidance
-        Vector3 avoidanceVelocity = CalculateAvoidanceVelocity();
-        desiredVelocity += avoidanceVelocity;
-
-        // Smoothly change velocity
-        currentVelocity = Vector3.Lerp(currentVelocity, desiredVelocity, Time.deltaTime / smoothTime);
-
-        // Move the drone
-        transform.position += currentVelocity * Time.deltaTime;
-
-        // Check if we've reached the current waypoint
+    /// <summary>
+    /// Updates the current waypoint progress
+    /// </summary>
+    private void UpdateWaypointProgress()
+    {
         if (currentPathIndex < currentPath.Count - 1)
         {
             Vector3 currentWaypoint = currentPath[currentPathIndex];
@@ -143,8 +200,13 @@ public class DroneMovement : MonoBehaviour
                 currentPathIndex++;
             }
         }
+    }
 
-        // Update path if needed
+    /// <summary>
+    /// Checks if the path needs to be updated
+    /// </summary>
+    private void CheckPathUpdateNeeded()
+    {
         if (Time.time >= lastPathUpdateTime + pathUpdateInterval && !hasReachedDestination)
         {
             float distanceToNextWaypoint = Vector3.Distance(transform.position, currentPath[currentPathIndex]);
@@ -153,51 +215,72 @@ public class DroneMovement : MonoBehaviour
                 UpdatePath();
             }
         }
+    }
 
-        // Debug logging
+    /// <summary>
+    /// Updates debug information if debug mode is enabled
+    /// </summary>
+    private void UpdateDebugInfo()
+    {
         if (debugMode && Time.time >= lastDebugTime + DEBUG_INTERVAL)
         {
             float distanceMoved = Vector3.Distance(transform.position, lastPosition);
-
             lastPosition = transform.position;
             lastDebugTime = Time.time;
         }
     }
 
+    /// <summary>
+    /// Calculates avoidance velocity to prevent collisions with other drones
+    /// </summary>
     private Vector3 CalculateAvoidanceVelocity()
     {
         Vector3 avoidanceVelocity = Vector3.zero;
-
-        // Check for drones in all directions using multiple raycasts
         for (int i = 0; i < 8; i++)
         {
             float angle = i * 45f;
             Vector3 direction = Quaternion.Euler(0, angle, 0) * transform.forward;
+            avoidanceVelocity += CalculateAvoidanceForDirection(direction);
+        }
+        return avoidanceVelocity;
+    }
 
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, avoidanceRadius, direction, raycastDistance, droneLayer);
+    /// <summary>
+    /// Calculates avoidance force for a specific direction
+    /// </summary>
+    private Vector3 CalculateAvoidanceForDirection(Vector3 direction)
+    {
+        Vector3 avoidanceVelocity = Vector3.zero;
+        RaycastHit[] hits = Physics.SphereCastAll(transform.position, avoidanceRadius, direction, raycastDistance, droneLayer);
 
-            foreach (RaycastHit hit in hits)
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider.gameObject != gameObject)
             {
-                if (hit.collider.gameObject != gameObject)
-                {
-                    Vector3 awayFromDrone = transform.position - hit.point;
-                    float distance = awayFromDrone.magnitude;
-
-                    if (distance < avoidanceRadius)
-                    {
-                        float force = avoidanceForce * (1f - (distance / avoidanceRadius));
-                        avoidanceVelocity += awayFromDrone.normalized * force;
-
-                        if (debugMode)
-                        {
-                            Debug.DrawLine(transform.position, hit.point, Color.red, 0.1f);
-                        }
-                    }
-                }
+                avoidanceVelocity += CalculateAvoidanceForce(hit.point);
             }
         }
-
         return avoidanceVelocity;
+    }
+
+    /// <summary>
+    /// Calculates the avoidance force for a specific collision point
+    /// </summary>
+    private Vector3 CalculateAvoidanceForce(Vector3 hitPoint)
+    {
+        Vector3 awayFromDrone = transform.position - hitPoint;
+        float distance = awayFromDrone.magnitude;
+
+        if (distance < avoidanceRadius)
+        {
+            float force = avoidanceForce * (1f - (distance / avoidanceRadius));
+            if (debugMode)
+            {
+                Debug.DrawLine(transform.position, hitPoint, Color.red, 0.1f);
+            }
+            return awayFromDrone.normalized * force;
+        }
+        return Vector3.zero;
     }
 
     private void UpdatePath(bool isReturningToBase = false)
