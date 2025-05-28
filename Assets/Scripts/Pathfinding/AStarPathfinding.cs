@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class AStarPathfinding : MonoBehaviour
 {
@@ -188,7 +189,7 @@ public class AStarPathfinding : MonoBehaviour
         return neighbors;
     }
 
-    public List<Vector3> FindPath(Transform droneTransform, Vector3 targetPos)
+    public List<Vector3> FindPath(Transform droneTransform, Vector3 targetPos, bool isReturningToBase = false)
     {
         if (!isInitialized)
         {
@@ -248,6 +249,19 @@ public class AStarPathfinding : MonoBehaviour
                 }
 
                 float newMovementCostToNeighbor = currentNode.gCost + Vector3.Distance(currentNode.position, neighbor.position);
+
+                // If returning to base, add a penalty for moving away from the base
+                if (isReturningToBase)
+                {
+                    float distanceToBase = Vector3.Distance(neighbor.position, targetPos);
+                    float distanceFromStartToBase = Vector3.Distance(currentNode.position, targetPos);
+                    if (distanceToBase > distanceFromStartToBase)
+                    {
+                        // Add penalty for moving away from base
+                        newMovementCostToNeighbor += (distanceToBase - distanceFromStartToBase) * 2f;
+                    }
+                }
+
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newMovementCostToNeighbor;
