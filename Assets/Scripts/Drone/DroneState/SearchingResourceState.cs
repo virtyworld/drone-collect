@@ -11,6 +11,7 @@ public class SearchingResourceState : DroneBaseState
 
     public override void EnterState()
     {
+        Debug.Log($"[SearchingResourceState] Entering state for drone {drone.gameObject.name}");
         // Enable the NavMeshAgent
         drone.StopMoving();
         lastSearchTime = Time.time;
@@ -23,6 +24,7 @@ public class SearchingResourceState : DroneBaseState
         if (Time.time >= lastSearchTime + searchInterval)
         {
             lastSearchTime = Time.time;
+            Debug.Log($"[SearchingResourceState] Searching for resources. Current target: {(currentTargetResource != null ? currentTargetResource.name : "none")}");
 
             // If we have a current target, check if we're still in queue
             if (currentTargetResource != null)
@@ -33,6 +35,7 @@ public class SearchingResourceState : DroneBaseState
                     // If we're not in queue anymore, clear the target
                     if (!spawnedResource.IsInQueue(drone))
                     {
+                        Debug.Log($"[SearchingResourceState] Lost queue position for resource {currentTargetResource.name}");
                         currentTargetResource = null;
                     }
                 }
@@ -46,22 +49,28 @@ public class SearchingResourceState : DroneBaseState
 
                 if (targetResource != null)
                 {
+                    Debug.Log($"[SearchingResourceState] Found potential resource: {targetResource.name}");
                     SpawnedResource spawnedResource = targetResource.GetComponent<SpawnedResource>();
                     if (spawnedResource != null)
                     {
                         // Try to claim the resource or get in queue
                         if (spawnedResource.TryClaimResource(drone))
                         {
-                            Debug.Log("Setting target resource");
+                            Debug.Log($"[SearchingResourceState] Successfully claimed resource {targetResource.name}");
                             drone.SetTargetResource(targetResource);
                             stateMachine.ChangeState(drone.MovingToResourceState);
                         }
                         else
                         {
                             // We're in queue, remember this resource
+                            Debug.Log($"[SearchingResourceState] Resource {targetResource.name} is busy, joining queue");
                             currentTargetResource = targetResource;
                         }
                     }
+                }
+                else
+                {
+                    Debug.Log($"[SearchingResourceState] No resources found within {searchRadius} radius");
                 }
             }
         }
@@ -69,12 +78,14 @@ public class SearchingResourceState : DroneBaseState
 
     public override void ExitState()
     {
+        Debug.Log($"[SearchingResourceState] Exiting state for drone {drone.gameObject.name}");
         // If we're leaving the state and have a target, remove ourselves from its queue
         if (currentTargetResource != null)
         {
             SpawnedResource spawnedResource = currentTargetResource.GetComponent<SpawnedResource>();
             if (spawnedResource != null)
             {
+                Debug.Log($"[SearchingResourceState] Removing from queue for resource {currentTargetResource.name}");
                 spawnedResource.RemoveFromQueue(drone);
             }
         }
