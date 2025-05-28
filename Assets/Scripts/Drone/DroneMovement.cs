@@ -16,6 +16,7 @@ public class DroneMovement : MonoBehaviour
     [SerializeField] private float smoothTime = 0.1f;
     [SerializeField] private bool debugMode = true;
 
+    private bool isInitialized = false;
     private List<Vector3> currentPath;
     private int currentPathIndex;
     private float lastPathUpdateTime;
@@ -30,8 +31,18 @@ public class DroneMovement : MonoBehaviour
     private float lastDebugTime;
     private const float DEBUG_INTERVAL = 1f;
 
-    private void Awake()
+    private UnityEvent<float> onDroneSpeedChanged;
+    private UnityEvent<bool> onPathVisibleChanged;
+    public void Setup(UnityEvent<float> onDroneSpeedChanged, UnityEvent<bool> onPathVisibleChanged)
     {
+        this.onDroneSpeedChanged = onDroneSpeedChanged;
+        this.onPathVisibleChanged = onPathVisibleChanged;
+
+        Initialize();
+    }
+    private void Initialize()
+    {
+        isInitialized = true;
         droneLayer = LayerMask.GetMask("Drone");
         lastPosition = transform.position;
         lastDebugTime = Time.time;
@@ -46,6 +57,8 @@ public class DroneMovement : MonoBehaviour
             pathLineRenderer.startColor = Color.yellow;
             pathLineRenderer.endColor = Color.yellow;
         }
+        onDroneSpeedChanged.AddListener(SetDroneSpeed);
+        onPathVisibleChanged.AddListener(SetPathVisible);
     }
 
     private void UpdatePathVisualization()
@@ -79,7 +92,10 @@ public class DroneMovement : MonoBehaviour
 
     private void Update()
     {
-
+        if (!isInitialized)
+        {
+            return;
+        }
         if (!isMoving || currentPath == null || currentPath.Count == 0)
         {
             return;
@@ -224,7 +240,10 @@ public class DroneMovement : MonoBehaviour
         currentVelocity = Vector3.zero;
         pathLineRenderer.positionCount = 0;
     }
-
+    public void StopAndWait()
+    {
+        isMoving = false;
+    }
     public void SetDroneSpeed(float speed)
     {
         moveSpeed = speed;
@@ -233,5 +252,15 @@ public class DroneMovement : MonoBehaviour
     public void SetPathVisible(bool visible)
     {
         pathLineRenderer.enabled = visible;
+    }
+
+    public void AddAvoidanceForce(Vector3 force)
+    {
+        currentVelocity += force;
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return currentVelocity;
     }
 }
