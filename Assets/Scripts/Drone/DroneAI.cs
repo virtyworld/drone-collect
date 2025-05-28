@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DroneAI : MonoBehaviour
 {
@@ -7,21 +8,26 @@ public class DroneAI : MonoBehaviour
     private DroneStateMachine stateMachine;
     public bool isCarryingResource { get; private set; }
     private GameObject targetResource;
-
+    private UnityEvent<int, int> onResourceUnloaded;
+    private int homeBaseFactionId;
     public SearchingResourceState SearchingState { get; private set; }
     public MovingToResourceState MovingToResourceState { get; private set; }
     public CollectingResourceState CollectingResourceState { get; private set; }
     public MovingToHomeState MovingToHomeState { get; private set; }
     public UnloadingResourceState UnloadingResourceState { get; private set; }
 
-    public void Setup(Base homeBase)
+    public void Setup(Base homeBase, UnityEvent<int, int> onResourceUnloaded, int homeBaseFactionId)
     {
         this.homeBase = homeBase;
+        this.homeBaseFactionId = homeBaseFactionId;
+        this.onResourceUnloaded = onResourceUnloaded;
+        Initialize();
     }
 
-    void Awake()
+    private void Initialize()
     {
         movementController = GetComponent<DroneMovement>();
+
         if (movementController == null)
         {
             movementController = gameObject.AddComponent<DroneMovement>();
@@ -34,16 +40,17 @@ public class DroneAI : MonoBehaviour
         CollectingResourceState = new CollectingResourceState(this, stateMachine);
         MovingToHomeState = new MovingToHomeState(this, stateMachine);
         UnloadingResourceState = new UnloadingResourceState(this, stateMachine);
-    }
-
-    void Start()
-    {
+        UnloadingResourceState.Setup(onResourceUnloaded, homeBaseFactionId);
         stateMachine.Initialize(SearchingState);
     }
 
+
     void Update()
     {
-        stateMachine.CurrentState.UpdateState();
+        if (stateMachine != null)
+        {
+            stateMachine.CurrentState.UpdateState();
+        }
     }
 
 
@@ -103,5 +110,27 @@ public class DroneAI : MonoBehaviour
     public void StopMoving()
     {
         movementController.StopMoving();
+    }
+
+    public bool IsReturningToBase()
+    {
+        return stateMachine.CurrentState == MovingToHomeState;
+    }
+
+    public void ContinueMovement()
+    {
+        if (stateMachine.CurrentState == MovingToResourceState)
+        {
+            // Если мы двигались к ресурсу, продолжаем движение к нему
+            if (targetResource != null)
+            {
+                MoveTo(targetResource.transform.position);
+            }
+        }
+        else if (stateMachine.CurrentState == MovingToHomeState)
+        {
+            // Если мы возвращались на базу, продолжаем движение к ней
+            MoveTo(GetHomeBasePosition(), true);
+        }
     }
 }
