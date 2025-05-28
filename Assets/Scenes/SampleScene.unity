@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 19046262}
   - component: {fileID: 19046261}
   - component: {fileID: 19046260}
+  - component: {fileID: 19046265}
   - component: {fileID: 19046259}
   m_Layer: 9
   m_Name: BluDrone (1)
@@ -373,6 +374,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 19046257}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &19046265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19046257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &36531933
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +405,7 @@ GameObject:
   - component: {fileID: 36531937}
   - component: {fileID: 36531936}
   - component: {fileID: 36531935}
+  - component: {fileID: 36531941}
   - component: {fileID: 36531940}
   m_Layer: 9
   m_Name: RedDrone (4)
@@ -627,6 +646,23 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &36531941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36531933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &68550264
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,6 +876,7 @@ GameObject:
   - component: {fileID: 84730894}
   - component: {fileID: 84730893}
   - component: {fileID: 84730892}
+  - component: {fileID: 84730897}
   - component: {fileID: 84730891}
   m_Layer: 9
   m_Name: BluDrone (4)
@@ -1080,6 +1117,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 84730889}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &84730897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84730889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &95698125
 GameObject:
   m_ObjectHideFlags: 0
@@ -1252,6 +1306,7 @@ GameObject:
   - component: {fileID: 121741581}
   - component: {fileID: 121741580}
   - component: {fileID: 121741579}
+  - component: {fileID: 121741584}
   - component: {fileID: 121741578}
   m_Layer: 9
   m_Name: BluDrone
@@ -1492,6 +1547,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 121741576}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &121741584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121741576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &159539994
 GameObject:
   m_ObjectHideFlags: 0
@@ -1721,6 +1793,7 @@ GameObject:
   - component: {fileID: 180951440}
   - component: {fileID: 180951439}
   - component: {fileID: 180951438}
+  - component: {fileID: 180951443}
   - component: {fileID: 180951437}
   m_Layer: 9
   m_Name: BluDrone (3)
@@ -1961,6 +2034,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 180951435}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &180951443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180951435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &289500198
 GameObject:
   m_ObjectHideFlags: 0
@@ -1973,6 +2063,7 @@ GameObject:
   - component: {fileID: 289500202}
   - component: {fileID: 289500201}
   - component: {fileID: 289500200}
+  - component: {fileID: 289500205}
   - component: {fileID: 289500204}
   - component: {fileID: 289500203}
   m_Layer: 0
@@ -6871,6 +6962,23 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!114 &289500205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289500198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9413f3278b5cdeb4e9afa94a269c59a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unloadParticles: {fileID: 289500204}
+  scaleEffectDuration: 0.5
+  scaleEffectMultiplier: 1.2
+  factionId: 0
+  collectedResources: 0
 --- !u!1 &301504989
 GameObject:
   m_ObjectHideFlags: 0
@@ -7645,6 +7753,7 @@ GameObject:
   - component: {fileID: 589132985}
   - component: {fileID: 589132984}
   - component: {fileID: 589132983}
+  - component: {fileID: 589132989}
   - component: {fileID: 589132988}
   m_Layer: 9
   m_Name: RedDrone (2)
@@ -7885,6 +7994,23 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &589132989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589132981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &593815969
 GameObject:
   m_ObjectHideFlags: 0
@@ -8305,6 +8431,9 @@ MonoBehaviour:
   showDronePathToggle: {fileID: 593815972}
   redFactionScoreText: {fileID: 1034532550}
   blueFactionScoreText: {fileID: 159539996}
+  onResourceUnloaded:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &828503406
 GameObject:
   m_ObjectHideFlags: 0
@@ -8453,6 +8582,7 @@ GameObject:
   - component: {fileID: 839456207}
   - component: {fileID: 839456206}
   - component: {fileID: 839456205}
+  - component: {fileID: 839456211}
   - component: {fileID: 839456210}
   m_Layer: 9
   m_Name: RedDrone (3)
@@ -8693,6 +8823,23 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &839456211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839456203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &839467814
 GameObject:
   m_ObjectHideFlags: 0
@@ -8894,6 +9041,14 @@ MonoBehaviour:
   - {fileID: 84730889}
   uiHandler: {fileID: 800558043}
   resourceSpawner: {fileID: 1561969099}
+  redBase: {fileID: 1552117269}
+  blueBase: {fileID: 289500205}
+  onResourceUnloaded:
+    m_PersistentCalls:
+      m_Calls: []
+  onDroneCountChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &974071748
 Transform:
   m_ObjectHideFlags: 0
@@ -9516,6 +9671,7 @@ GameObject:
   - component: {fileID: 1150965004}
   - component: {fileID: 1150965003}
   - component: {fileID: 1150965002}
+  - component: {fileID: 1150965007}
   - component: {fileID: 1150965001}
   m_Layer: 9
   m_Name: BluDrone (2)
@@ -9756,6 +9912,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1150964999}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1150965007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150964999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1 &1152975526
 GameObject:
   m_ObjectHideFlags: 0
@@ -10193,6 +10366,7 @@ GameObject:
   - component: {fileID: 1552117269}
   - component: {fileID: 1552117268}
   - component: {fileID: 1552117267}
+  - component: {fileID: 1552117270}
   m_Layer: 0
   m_Name: RedBase
   m_TagString: Untagged
@@ -15104,6 +15278,25 @@ MonoBehaviour:
   unloadParticles: {fileID: 1552117268}
   scaleEffectDuration: 0.5
   scaleEffectMultiplier: 1.2
+  factionId: 0
+  collectedResources: 0
+--- !u!114 &1552117270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552117262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9413f3278b5cdeb4e9afa94a269c59a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unloadParticles: {fileID: 0}
+  scaleEffectDuration: 0.5
+  scaleEffectMultiplier: 1.2
+  factionId: 0
+  collectedResources: 0
 --- !u!1 &1553955349
 GameObject:
   m_ObjectHideFlags: 0
@@ -15203,13 +15396,14 @@ MonoBehaviour:
   resourcePrefab: {fileID: 8742063876868878543, guid: 90b2610419a5a244eb64f37704ae4f17, type: 3}
   spawnInterval: 5
   spawnRadius: 10
+  minSpawnHeight: -10
+  maxSpawnHeight: 10
   maxResources: 100
   obstacleCheckRadius: 2
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 2688
   dirToSpawn: {fileID: 1884123115}
-  showSpawnRadius: 0
 --- !u!1 &1578049319
 GameObject:
   m_ObjectHideFlags: 0
@@ -16280,7 +16474,7 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 128
-  showDebugGrid: 1
+  showDebugGrid: 0
 --- !u!4 &1928119119
 Transform:
   m_ObjectHideFlags: 0
@@ -16785,6 +16979,7 @@ GameObject:
   - component: {fileID: 5869334943146057525}
   - component: {fileID: 4844528977339397185}
   - component: {fileID: 6334605244238040302}
+  - component: {fileID: 7978961380818386623}
   - component: {fileID: 993671646017982757}
   m_Layer: 9
   m_Name: RedDrone
@@ -17114,6 +17309,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7978961380818386623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2678761036146685238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!114 &8022657902597574717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17141,6 +17353,7 @@ GameObject:
   - component: {fileID: 6063697564136110651}
   - component: {fileID: 8022657902597574717}
   - component: {fileID: 5144490072580248838}
+  - component: {fileID: 8489428818200642228}
   - component: {fileID: 7011761968910668085}
   m_Layer: 9
   m_Name: RedDrone (1)
@@ -17149,6 +17362,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!114 &8489428818200642228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8489428818200642227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4330b79e74d0d4d4eb93f213dd565d37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRadius: 1.5
+  droneLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  waitTime: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@ using UnityEngine;
 public class SearchingResourceState : DroneBaseState
 {
     private float searchRadius = 20f;
-    private float searchInterval = 1f; // How often to search for resources
+    private float searchInterval = 0.5f; // How often to search for resources
     private float lastSearchTime;
     private GameObject currentTargetResource = null;
 
@@ -32,10 +32,10 @@ public class SearchingResourceState : DroneBaseState
                 SpawnedResource spawnedResource = currentTargetResource.GetComponent<SpawnedResource>();
                 if (spawnedResource != null)
                 {
-                    // If we're not in queue anymore, clear the target
-                    if (!spawnedResource.IsInQueue(drone))
+                    // If we're in queue, start searching for a new resource
+                    if (spawnedResource.IsInQueue(drone))
                     {
-                        Debug.Log($"[SearchingResourceState] Lost queue position for resource {currentTargetResource.name}");
+                        Debug.Log($"[SearchingResourceState] Drone is in queue for resource {currentTargetResource.name}, starting new search");
                         currentTargetResource = null;
                     }
                 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MovingToHomeState : DroneBaseState
 {
-    private float arrivalDistance = 1.5f; // Distance at which we consider the drone has arrived at the base
+    private float arrivalDistance = 2f; // Distance at which we consider the drone has arrived at the base
 
     public MovingToHomeState(DroneAI drone, DroneStateMachine stateMachine) : base(drone, stateMachine) { }
 

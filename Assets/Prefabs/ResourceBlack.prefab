@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7972231830111419304}
   - component: {fileID: 6010883644569596875}
   - component: {fileID: 8742063876868878543}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ResourceBlack
   m_TagString: Resource
   m_Icon: {fileID: 0}
@@ -121,3 +121,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a363da743a1ad419d3171e0a892e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFree: 1

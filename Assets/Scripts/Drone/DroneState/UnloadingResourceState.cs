@@ -1,17 +1,19 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 
 public class UnloadingResourceState : DroneBaseState
 {
     private bool isUnloading = false;
     private float unloadingTime = 2f; // Time it takes to unload the resource
-    private Base homeBase;
-
+    private int homeBaseFactionId;
+    private UnityEvent<int, int> onResourceUnloaded;
     public UnloadingResourceState(DroneAI drone, DroneStateMachine stateMachine) : base(drone, stateMachine) { }
 
-    public void Setup(Base homeBase)
+    public void Setup(UnityEvent<int, int> onResourceUnloaded, int homeBaseFactionId)
     {
-        this.homeBase = homeBase;
+        this.homeBaseFactionId = homeBaseFactionId;
+        this.onResourceUnloaded = onResourceUnloaded;
     }
     public override void EnterState()
     {
@@ -38,10 +40,7 @@ public class UnloadingResourceState : DroneBaseState
         drone.SetCarryingResource(false);
 
         // Notify the base about resource unloading
-        if (homeBase != null)
-        {
-            homeBase.OnResourceUnloaded();
-        }
+        onResourceUnloaded.Invoke(homeBaseFactionId, 1);
 
         // Return to searching for resources
         stateMachine.ChangeState(drone.SearchingState);
