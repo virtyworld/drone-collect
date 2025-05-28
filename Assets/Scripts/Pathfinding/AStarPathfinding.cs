@@ -4,8 +4,7 @@ using System.Collections.Generic;
 public class AStarPathfinding : MonoBehaviour
 {
     [SerializeField] private LayerMask unwalkableMask; // Set this in the inspector to specify which layers block movement
-    [SerializeField] private bool showDebugGrid = true; // Toggle grid visualization in the inspector
-    private Transform droneTransform; // Reference to the drone's transform
+    [SerializeField] private bool showDebugGrid = true; // Toggle grid visualization in the inspector   
     public bool HasReachedDestination { get; private set; } = false;
 
     private class Node
@@ -36,28 +35,12 @@ public class AStarPathfinding : MonoBehaviour
 
     private void Awake()
     {
-        droneTransform = gameObject.transform;
         nodeDiameter = nodeRadius * 2;
         // Увеличиваем размер сетки для лучшего покрытия сцены
         gridWorldSize = new Vector3(40f, 30f, 40f);
     }
 
-    public void Initialize()
-    {
-        if (!isInitialized)
-        {
-            CreateGrid();
-            isInitialized = true;
-        }
-    }
-
-    public void ResetPathfinding()
-    {
-        isInitialized = false;
-        grid = null;
-    }
-
-    private void CreateGrid()
+    private void CreateGrid(Transform droneTransform)
     {
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
@@ -79,14 +62,14 @@ public class AStarPathfinding : MonoBehaviour
                         Vector3.forward * (z * nodeDiameter + nodeRadius);
 
                     // Проверяем проходимость с учетом размеров дрона
-                    bool walkable = IsWalkable(worldPoint);
+                    bool walkable = IsWalkable(droneTransform, worldPoint);
                     grid[x, y, z] = new Node(worldPoint, walkable);
                 }
             }
         }
     }
 
-    private bool IsWalkable(Vector3 position)
+    private bool IsWalkable(Transform droneTransform, Vector3 position)
     {
         if (droneTransform == null) return false;
 
@@ -205,15 +188,16 @@ public class AStarPathfinding : MonoBehaviour
         return neighbors;
     }
 
-    public List<Vector3> FindPath(Vector3 startPos, Vector3 targetPos)
+    public List<Vector3> FindPath(Transform droneTransform, Vector3 targetPos)
     {
         if (!isInitialized)
         {
-            Initialize();
+            CreateGrid(droneTransform);
+            isInitialized = true;
         }
 
         HasReachedDestination = false;
-        Node startNode = NodeFromWorldPoint(startPos);
+        Node startNode = NodeFromWorldPoint(droneTransform.position);
         Node targetNode = NodeFromWorldPoint(targetPos);
 
         if (!startNode.walkable || !targetNode.walkable)
