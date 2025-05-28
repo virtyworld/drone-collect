@@ -1,35 +1,70 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class DroneMovement : MonoBehaviour
 {
     [SerializeField] private AStarPathfinding pathfinding;
+    [SerializeField] private LineRenderer pathLineRenderer;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float pathUpdateInterval = 2f; // Reduced from 5f to 2f
+    [SerializeField] private float waypointReachedDistance = 0.5f;
+    [SerializeField] private float minDistanceToTarget = 0.2f;
+    [SerializeField] private float avoidanceRadius = 2f;
+    [SerializeField] private float avoidanceForce = 2f;
+    [SerializeField] private float raycastDistance = 3f;
+    [SerializeField] private float smoothTime = 0.1f;
+    [SerializeField] private bool debugMode = true;
+
     private List<Vector3> currentPath;
     private int currentPathIndex;
-    private float moveSpeed = 5f;
-    private float pathUpdateInterval = 5f;
     private float lastPathUpdateTime;
     private Vector3 targetPosition;
     private bool isMoving;
-    private float waypointReachedDistance = 0.5f;
-    private float minDistanceToTarget = 0.2f;
     private bool hasReachedDestination = false;
-
-    // Collision avoidance parameters
-    private float avoidanceRadius = 2f;
-    private float avoidanceForce = 2f;
-    private float raycastDistance = 3f;
     private LayerMask droneLayer;
     private Vector3 currentVelocity;
-    private float smoothTime = 0.1f;
+
+    // Debug variables
+    private Vector3 lastPosition;
+    private float lastDebugTime;
+    private const float DEBUG_INTERVAL = 1f;
 
     private void Awake()
     {
-        // Set up the drone layer mask
         droneLayer = LayerMask.GetMask("Drone");
+        lastPosition = transform.position;
+        lastDebugTime = Time.time;
+
+        // Initialize LineRenderer if not assigned
+        if (pathLineRenderer == null)
+        {
+            pathLineRenderer = gameObject.AddComponent<LineRenderer>();
+            pathLineRenderer.startWidth = 0.1f;
+            pathLineRenderer.endWidth = 0.1f;
+            pathLineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            pathLineRenderer.startColor = Color.yellow;
+            pathLineRenderer.endColor = Color.yellow;
+        }
     }
 
-    public void SetDestination(Vector3 target)
+    private void UpdatePathVisualization()
+    {
+        if (currentPath != null && currentPath.Count > 0)
+        {
+            pathLineRenderer.positionCount = currentPath.Count;
+            for (int i = 0; i < currentPath.Count; i++)
+            {
+                pathLineRenderer.SetPosition(i, currentPath[i]);
+            }
+        }
+        else
+        {
+            pathLineRenderer.positionCount = 0;
+        }
+    }
+
+    public void SetDestination(Vector3 target, bool isReturningToBase = false)
     {
         if (isMoving)
         {
@@ -39,16 +74,16 @@ public class DroneMovement : MonoBehaviour
         targetPosition = target;
         isMoving = true;
         hasReachedDestination = false;
-        UpdatePath();
+        UpdatePath(isReturningToBase);
     }
 
     private void Update()
     {
+
         if (!isMoving || currentPath == null || currentPath.Count == 0)
         {
             return;
         }
-
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
         if (distanceToTarget <= minDistanceToTarget)
@@ -56,6 +91,8 @@ public class DroneMovement : MonoBehaviour
             isMoving = false;
             hasReachedDestination = true;
             currentPath = null;
+            pathLineRenderer.positionCount = 0;
+
             return;
         }
 
@@ -100,28 +137,46 @@ public class DroneMovement : MonoBehaviour
                 UpdatePath();
             }
         }
+
+        // Debug logging
+        if (debugMode && Time.time >= lastDebugTime + DEBUG_INTERVAL)
+        {
+            float distanceMoved = Vector3.Distance(transform.position, lastPosition);
+
+            lastPosition = transform.position;
+            lastDebugTime = Time.time;
+        }
     }
 
     private Vector3 CalculateAvoidanceVelocity()
     {
         Vector3 avoidanceVelocity = Vector3.zero;
 
-        // Check for drones in front using raycast
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position, avoidanceRadius, transform.forward, raycastDistance, droneLayer);
-
-        foreach (RaycastHit hit in hits)
+        // Check for drones in all directions using multiple raycasts
+        for (int i = 0; i < 8; i++)
         {
-            if (hit.collider.gameObject != gameObject) // Ignore self
-            {
-                // Calculate avoidance force
-                Vector3 awayFromDrone = transform.position - hit.point;
-                float distance = awayFromDrone.magnitude;
+            float angle = i * 45f;
+            Vector3 direction = Quaternion.Euler(0, angle, 0) * transform.forward;
 
-                if (distance < avoidanceRadius)
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, avoidanceRadius, direction, raycastDistance, droneLayer);
+
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.gameObject != gameObject)
                 {
-                    // Stronger force when closer
-                    float force = avoidanceForce * (1f - (distance / avoidanceRadius));
-                    avoidanceVelocity += awayFromDrone.normalized * force;
+                    Vector3 awayFromDrone = transform.position - hit.point;
+                    float distance = awayFromDrone.magnitude;
+
+                    if (distance < avoidanceRadius)
+                    {
+                        float force = avoidanceForce * (1f - (distance / avoidanceRadius));
+                        avoidanceVelocity += awayFromDrone.normalized * force;
+
+                        if (debugMode)
+                        {
+                            Debug.DrawLine(transform.position, hit.point, Color.red, 0.1f);
+                        }
+                    }
                 }
             }
         }
@@ -129,31 +184,31 @@ public class DroneMovement : MonoBehaviour
         return avoidanceVelocity;
     }
 
-    private void UpdatePath()
+    private void UpdatePath(bool isReturningToBase = false)
     {
         if (pathfinding != null)
         {
-            Debug.Log($"Updating path from {transform.position} to {targetPosition}");
-            currentPath = pathfinding.FindPath(transform, targetPosition);
+            currentPath = pathfinding.FindPath(transform, targetPosition, isReturningToBase);
             if (currentPath != null && currentPath.Count > 0)
             {
-                Debug.Log($"New path calculated with {currentPath.Count} waypoints");
                 currentPathIndex = 0;
                 if (currentPath.Count > 1 && Vector3.Distance(transform.position, currentPath[0]) < waypointReachedDistance)
                 {
                     currentPathIndex = 1;
                 }
                 lastPathUpdateTime = Time.time;
+                UpdatePathVisualization();
             }
             else
             {
-                Debug.LogWarning("Failed to calculate path");
+                Debug.LogWarning($"[{gameObject.name}] Failed to calculate path to {targetPosition}");
                 isMoving = false;
+                pathLineRenderer.positionCount = 0;
             }
         }
         else
         {
-            Debug.LogError("Pathfinding component is null!");
+            Debug.LogError($"[{gameObject.name}] Pathfinding component is null!");
         }
     }
 
@@ -167,5 +222,16 @@ public class DroneMovement : MonoBehaviour
         isMoving = false;
         currentPath = null;
         currentVelocity = Vector3.zero;
+        pathLineRenderer.positionCount = 0;
+    }
+
+    public void SetDroneSpeed(float speed)
+    {
+        moveSpeed = speed;
+    }
+
+    public void SetPathVisible(bool visible)
+    {
+        pathLineRenderer.enabled = visible;
     }
 }
