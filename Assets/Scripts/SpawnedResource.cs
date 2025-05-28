@@ -62,4 +62,5 @@ public class SpawnedResource : MonoBehaviour
     {
         return currentDrone == drone;
     }
+
 }
