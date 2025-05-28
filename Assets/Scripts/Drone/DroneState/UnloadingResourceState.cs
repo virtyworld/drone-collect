@@ -16,7 +16,7 @@ public class UnloadingResourceState : DroneBaseState
     public override void EnterState()
     {
         // Stop the drone
-        drone.agent.isStopped = true;
+        drone.StopMoving();
         isUnloading = false;
     }
 

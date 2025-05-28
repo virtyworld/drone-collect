@@ -1,12 +1,12 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class DroneAI : MonoBehaviour
 {
-    public NavMeshAgent agent;
+    [SerializeField] private Base homeBase;
+    private DroneMovement movementController;
     private DroneStateMachine stateMachine;
     public bool isCarryingResource { get; private set; }
-    private Base homeBase;
+    private GameObject targetResource;
 
     public SearchingResourceState SearchingState { get; private set; }
     public MovingToResourceState MovingToResourceState { get; private set; }
@@ -18,9 +18,15 @@ public class DroneAI : MonoBehaviour
     {
         this.homeBase = homeBase;
     }
+
     void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        movementController = GetComponent<DroneMovement>();
+        if (movementController == null)
+        {
+            movementController = gameObject.AddComponent<DroneMovement>();
+        }
+
         stateMachine = new DroneStateMachine();
 
         SearchingState = new SearchingResourceState(this, stateMachine);
@@ -40,14 +46,62 @@ public class DroneAI : MonoBehaviour
         stateMachine.CurrentState.UpdateState();
     }
 
+
     public void SetCarryingResource(bool value)
     {
         isCarryingResource = value;
     }
 
-
     public Vector3 GetHomeBasePosition()
     {
         return homeBase != null ? homeBase.transform.position : transform.position;
+    }
+
+    public GameObject FindBestResource(float searchRadius = 15f)
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, searchRadius);
+        GameObject bestResource = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (Collider collider in colliders)
+        {
+            // Check if the object has SpawnedResource component or Resource tag
+            if (collider.CompareTag("Resource") || collider.GetComponent<SpawnedResource>() != null)
+            {
+                float distance = Vector3.Distance(transform.position, collider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    bestResource = collider.gameObject;
+                }
+            }
+        }
+
+        return bestResource;
+    }
+
+    public void SetTargetResource(GameObject resource)
+    {
+        targetResource = resource;
+    }
+
+    public GameObject GetTargetResource()
+    {
+        return targetResource;
+    }
+
+    public void MoveTo(Vector3 destination)
+    {
+        movementController.SetDestination(destination);
+    }
+
+    public bool HasReachedDestination()
+    {
+        return movementController.HasReachedDestination();
+    }
+
+    public void StopMoving()
+    {
+        movementController.StopMoving();
     }
 }

@@ -11,8 +11,9 @@ public class CollectingResourceState : DroneBaseState
     public override void EnterState()
     {
         // Остановить движение дрона
-        drone.agent.isStopped = true;
+        drone.StopMoving();
         isCollecting = false;
+        targetResource = drone.GetTargetResource();
     }
 
     public override void UpdateState()
@@ -29,20 +30,27 @@ public class CollectingResourceState : DroneBaseState
         // Ждем 2 секунды
         yield return new WaitForSeconds(2f);
 
-        // Найти ближайший ресурс
-        Collider[] colliders = Physics.OverlapSphere(drone.transform.position, 1f);
-        foreach (Collider collider in colliders)
+        if (targetResource != null)
         {
-            if (collider.CompareTag("Resource"))
+            SpawnedResource spawnedResource = targetResource.GetComponent<SpawnedResource>();
+            if (spawnedResource != null)
             {
-                // Уничтожаем ресурс
-                Object.Destroy(collider.gameObject);
-                // Устанавливаем флаг, что дрон несет ресурс
-                drone.SetCarryingResource(true);
-                // Переходим к следующему состоянию
-                stateMachine.ChangeState(drone.MovingToHomeState);
-                break;
+                // Release the resource before destroying it
+                spawnedResource.ReleaseResource();
             }
+
+            Debug.Log("Collecting resource");
+            // Уничтожаем ресурс
+            Object.Destroy(targetResource);
+            // Устанавливаем флаг, что дрон несет ресурс
+            drone.SetCarryingResource(true);
+            // Переходим к следующему состоянию
+            stateMachine.ChangeState(drone.MovingToHomeState);
+        }
+        else
+        {
+            // If resource is gone, go back to searching
+            stateMachine.ChangeState(drone.SearchingState);
         }
     }
 }
