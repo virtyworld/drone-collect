@@ -387,10 +387,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &36531933
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,10 +661,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &68550264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,10 +1134,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &95698125
 GameObject:
   m_ObjectHideFlags: 0
@@ -1560,10 +1566,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &159539994
 GameObject:
   m_ObjectHideFlags: 0
@@ -2047,10 +2055,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &289500198
 GameObject:
   m_ObjectHideFlags: 0
@@ -6975,8 +6985,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unloadParticles: {fileID: 289500204}
-  scaleEffectDuration: 0.5
-  scaleEffectMultiplier: 1.2
   factionId: 0
   collectedResources: 0
 --- !u!1 &301504989
@@ -7027,6 +7035,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -7152,6 +7161,20 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b02881ce1243a4495c81cc160ec91c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  mouseSensitivity: 2
 --- !u!1 &343465220
 GameObject:
   m_ObjectHideFlags: 0
@@ -8007,10 +8030,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &593815969
 GameObject:
   m_ObjectHideFlags: 0
@@ -8836,10 +8861,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &839467814
 GameObject:
   m_ObjectHideFlags: 0
@@ -9925,10 +9952,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1 &1152975526
 GameObject:
   m_ObjectHideFlags: 0
@@ -15276,8 +15305,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unloadParticles: {fileID: 1552117268}
-  scaleEffectDuration: 0.5
-  scaleEffectMultiplier: 1.2
   factionId: 0
   collectedResources: 0
 --- !u!114 &1552117270
@@ -15293,8 +15320,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unloadParticles: {fileID: 0}
-  scaleEffectDuration: 0.5
-  scaleEffectMultiplier: 1.2
   factionId: 0
   collectedResources: 0
 --- !u!1 &1553955349
@@ -17322,10 +17347,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!114 &8022657902597574717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17375,10 +17402,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1.5
+  minSeparationDistance: 1
+  maxAvoidanceForce: 5
   droneLayer:
     serializedVersion: 2
     m_Bits: 512
-  waitTime: 1
+  predictionTime: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
