@@ -9,11 +9,11 @@
 Здесь вы можете увидеть несколько скриншотов из симуляции:
 
 <p align="center">
-  <a href="https://drive.google.com/file/d/1U-RKf3y3UopMvEwEvKjqeMxOZi3UIYia/view?usp=sharing" target="_blank">
-    <img src="https://drive.google.com/file/d/1U-RKf3y3UopMvEwEvKjqeMxOZi3UIYia/view?usp=sharing" alt="Скриншот симуляции 1" width="400"/>
+  <a href="https://raw.githubusercontent.com/virtyworld/drone-collect/refs/heads/main/Screenshot/1.jpg" target="_blank">
+    <img src="https://raw.githubusercontent.com/virtyworld/drone-collect/refs/heads/main/Screenshot/1.jpg" alt="Скриншот симуляции 1" width="400"/>
   </a>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://drive.google.com/file/d/1X0KEtjcQv5fHFJO5s336xOxl3d6V1H92/view?usp=sharing" target="_blank">
-    <img src="https://drive.google.com/file/d/1X0KEtjcQv5fHFJO5s336xOxl3d6V1H92/view?usp=sharing" alt="Скриншот симуляции 2" width="400"/>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://raw.githubusercontent.com/virtyworld/drone-collect/refs/heads/main/Screenshot/2.jpg" target="_blank">
+    <img src="https://raw.githubusercontent.com/virtyworld/drone-collect/refs/heads/main/Screenshot/2.jpg" alt="Скриншот симуляции 2" width="400"/>
   </a>
 </p>
 ---
